@@ -31,7 +31,7 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 gem 'rack-cors', :require => 'rack/cors'
-gem 'ruby-openai', '~> 4.2'
+gem 'ruby-openai', '~> 8.1'
 gem 'aws-sdk'
 gem 'active_model_serializers', '~> 0.10.0'
 
