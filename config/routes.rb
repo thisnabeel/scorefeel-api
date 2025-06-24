@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   resources :tags, only: [:index, :show, :create, :update, :destroy]
   resources :stories, only: [:index, :show, :create, :update, :destroy]
   resources :pictures, only: [:index, :show, :create, :update, :destroy]
+  resources :blurbs, only: [:index, :show, :create, :update, :destroy]
+  
+  # Custom route for getting blurbs by blurbable
+  get 'blurbs/for/:blurbable_type/:blurbable_id', to: 'blurbs#for_blurbable'
+  post 'blurbs/for/:blurbable_type/:blurbable_id/wizard', to: 'blurbs#wizard'
   
   # Additional nested routes for better API design
   resources :sports, only: [:index, :show, :create, :update, :destroy] do
@@ -40,6 +45,7 @@ Rails.application.routes.draw do
     resources :pictures, only: [:index, :create]
     post :generate_pictures, on: :member
     post :upload_picture, on: :member
+    get :validate, on: :member
   end
 
   resources :pictures, only: [:index, :show, :create, :update, :destroy] do

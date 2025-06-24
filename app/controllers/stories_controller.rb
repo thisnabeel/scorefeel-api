@@ -1,5 +1,5 @@
 class StoriesController < BaseController
-  before_action :set_story, only: [:show, :update, :destroy, :generate_pictures, :upload_picture]
+  before_action :set_story, only: [:show, :update, :destroy, :generate_pictures, :upload_picture, :validate]
 
   def index
     if params[:figure_id]
@@ -103,6 +103,32 @@ class StoriesController < BaseController
       puts "Error: #{e.message}"
       render json: { 
         error: "Failed to upload picture", 
+        details: e.message 
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def validate
+    prompt = "Please analyze the following story for accuracy and truthfulness. Consider historical facts, logical consistency, and verifiable information. Return your analysis as a JSON object with the following structure exactly:\n\n{\n  \"is_accurate\": true/false,\n  \"confidence_score\": 0-100,\n  \"issues_found\": [\"list of specific issues or concerns\"],\n  \"verification_notes\": \"detailed explanation of your assessment\",\n  \"recommendations\": [\"suggestions for improvement or verification\"]\n}\n\nStory Title: #{@story.title}\n\nStory Content:\n#{@story.body}"
+    
+    begin
+      validation_result = WizardService.ask(prompt, "json_object")
+      
+      # Handle nested response structure
+      if validation_result.is_a?(Hash) && validation_result.keys.length == 1
+        validation_result = validation_result[validation_result.keys.first]
+      end
+      
+      render json: {
+        story_id: @story.id,
+        story_title: @story.title,
+        validation: validation_result
+      }, status: :ok
+      
+    rescue => e
+      Rails.logger.error "Story validation error: #{e.message}"
+      render json: { 
+        error: "Failed to validate story", 
         details: e.message 
       }, status: :unprocessable_entity
     end

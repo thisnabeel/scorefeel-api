@@ -7,6 +7,7 @@ class Figure < ApplicationRecord
   has_many :pictures, as: :picturable, dependent: :destroy
   has_many :taggings, as: :tagable, dependent: :destroy
   has_many :tags, through: :taggings
+  has_many :blurbs, as: :blurbable, dependent: :destroy
 
   validates :title, presence: true
   validates :summary, presence: true

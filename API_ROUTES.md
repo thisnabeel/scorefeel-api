@@ -100,6 +100,7 @@ These are the RESTful API endpoints for your sports journalism app. Use these ro
 | Create            | POST   | `/stories`                       | Create a new story                        |
 | Update            | PUT    | `/stories/:id`                   | Update a story                            |
 | Delete            | DELETE | `/stories/:id`                   | Delete a story                            |
+| Validate Story    | GET    | `/stories/:id/validate`          | Validate story accuracy using AI          |
 | Generate Pictures | POST   | `/stories/:id/generate_pictures` | Generate AI picture suggestions for story |
 | Upload Picture    | POST   | `/stories/:id/upload_picture`    | Upload a picture for a story              |
 | Get Pictures      | GET    | `/stories/:story_id/pictures`    | Get all pictures for a story              |
@@ -118,6 +119,22 @@ These are the RESTful API endpoints for your sports journalism app. Use these ro
 | Upload Image | POST   | `/pictures/:id/upload_picture` | Upload image file for an existing picture |
 
 **Note**: Pictures are polymorphic and can be associated with stories, figures, sports, etc. They include caption, image_url, storage_key, and cover fields.
+
+---
+
+## Blurbs
+
+| Action           | Method | Endpoint                                           | Description                             |
+| ---------------- | ------ | -------------------------------------------------- | --------------------------------------- |
+| List all         | GET    | `/blurbs`                                          | Get all blurbs                          |
+| Get one          | GET    | `/blurbs/:id`                                      | Get a specific blurb                    |
+| Create           | POST   | `/blurbs`                                          | Create a new blurb                      |
+| Update           | PUT    | `/blurbs/:id`                                      | Update a blurb                          |
+| Delete           | DELETE | `/blurbs/:id`                                      | Delete a blurb                          |
+| Get by Blurbable | GET    | `/blurbs/for/:blurbable_type/:blurbable_id`        | Get blurbs for a specific blurbable     |
+| Generate Blurbs  | POST   | `/blurbs/for/:blurbable_type/:blurbable_id/wizard` | Generate AI fact blurbs for a blurbable |
+
+**Note**: Blurbs are polymorphic and can be associated with stories, figures, etc. They include title, description, starred (default: true), and blurbable_type/blurbable_id fields.
 
 ---
 
@@ -318,7 +335,74 @@ fetch("/pictures/1/upload_picture", {
 })
   .then((response) => response.json())
   .then((data) => console.log(data));
-```
+
+// Validate story accuracy using AI
+fetch("/stories/1/validate")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+// Response includes: is_accurate, confidence_score, issues_found, verification_notes, recommendations
+
+// Create a new blurb
+fetch("/blurbs", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    blurb: {
+      title: "Quick Fact",
+      description: "This is a quick fact about the story or figure",
+      blurbable_type: "Story",
+      blurbable_id: 1,
+      starred: true,
+    },
+  }),
+});
+
+// Get all blurbs for a specific story
+fetch("/blurbs/for/Story/1")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+// Get all blurbs for a specific figure
+fetch("/blurbs/for/Figure/1")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+// Update a blurb
+fetch("/blurbs/1", {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    blurb: {
+      title: "Updated Quick Fact",
+      description: "Updated description",
+      starred: false,
+    },
+  }),
+});
+
+// Generate fact blurbs for a story using AI
+fetch("/blurbs/for/Story/1/wizard", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+// Generate fact blurbs for a figure using AI
+fetch("/blurbs/for/Figure/1/wizard", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
 
 ## AI-Powered Features
 
@@ -327,7 +411,10 @@ fetch("/pictures/1/upload_picture", {
 - **Generate Events**: Use `/sports/:id/generate_events` to automatically generate upcoming events for a sport using AI
 - **Generate Stories**: Use `/sports/:id/generate_story`, `/figures/:id/generate_story`, or `/events/:id/generate_story` to automatically generate engaging stories using AI
 - **Generate Pictures**: Use `/stories/:id/generate_pictures` to automatically generate picture suggestions for stories using AI
+- **Generate Blurbs**: Use `/blurbs/for/:blurbable_type/:blurbable_id/wizard` to automatically generate fact blurbs for stories or figures using AI
+- **Validate Stories**: Use `/stories/:id/validate` to check story accuracy and truthfulness using AI analysis
 - The system avoids creating duplicate figures or rules that already exist
 - Returns the newly created figures, rules, events, stories, or picture suggestions with their details
 
 If you need example request/response payloads or want to see how to wire up forms, tables, or CRUD actions for any of these, just ask!
+```

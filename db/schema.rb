@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_21_011157) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_111057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "blurbs", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "blurbable_type"
+    t.integer "blurbable_id"
+    t.boolean "starred", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blurbable_type", "blurbable_id"], name: "index_blurbs_on_blurbable_type_and_blurbable_id"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "title"
