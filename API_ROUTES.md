@@ -138,6 +138,38 @@ These are the RESTful API endpoints for your sports journalism app. Use these ro
 
 ---
 
+## Bullet Points
+
+| Action                  | Method | Endpoint                                                                | Description                                       |
+| ----------------------- | ------ | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| List all                | GET    | `/bullet_points`                                                        | Get all bullet points                             |
+| Get one                 | GET    | `/bullet_points/:id`                                                    | Get a specific bullet point                       |
+| Create                  | POST   | `/bullet_points`                                                        | Create a new bullet point                         |
+| Update                  | PUT    | `/bullet_points/:id`                                                    | Update a bullet point                             |
+| Delete                  | DELETE | `/bullet_points/:id`                                                    | Delete a bullet point                             |
+| Get by Bullet Pointable | GET    | `/bullet_points/for/:bullet_pointable_type/:bullet_pointable_id`        | Get bullet points for a specific bullet pointable |
+| Generate Bullet Points  | POST   | `/bullet_points/for/:bullet_pointable_type/:bullet_pointable_id/wizard` | Generate AI bullet points for a bullet pointable  |
+
+**Note**: Bullet points are polymorphic and can be associated with stories, figures, etc. They include body, position (auto-increment), and bullet_pointable_type/bullet_pointable_id fields.
+
+---
+
+## Pages
+
+| Action          | Method | Endpoint                                 | Description                       |
+| --------------- | ------ | ---------------------------------------- | --------------------------------- |
+| List all        | GET    | `/pages`                                 | Get all pages                     |
+| Get one         | GET    | `/pages/:id`                             | Get a specific page               |
+| Create          | POST   | `/pages`                                 | Create a new page                 |
+| Update          | PUT    | `/pages/:id`                             | Update a page                     |
+| Delete          | DELETE | `/pages/:id`                             | Delete a page                     |
+| Get by Pageable | GET    | `/pages/for/:pageable_type/:pageable_id` | Get pages for a specific pageable |
+| Get by Slug     | GET    | `/pages/by-slug/:slug`                   | Get a page by its slug            |
+
+**Note**: Pages are polymorphic and can be associated with stories, figures, sports, etc. They include title, slug (unique, auto-generated), position, level, and pageable_type/pageable_id fields. The slug is automatically generated from the title and is used for SEO-friendly URLs.
+
+---
+
 ## How to Use in Your Frontend
 
 - Use these endpoints to build CRUD (Create, Read, Update, Delete) management views for each resource.
@@ -404,6 +436,48 @@ fetch("/blurbs/for/Figure/1/wizard", {
 })
   .then((response) => response.json())
   .then((data) => console.log(data));
+
+// Create a new page
+fetch("/pages", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    page: {
+      title: "About Our Sport",
+      position: 1,
+      level: 0,
+      pageable_type: "Sport",
+      pageable_id: 1,
+    },
+  }),
+});
+
+// Get all pages for a specific sport
+fetch("/pages/for/Sport/1")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+// Get a page by its slug
+fetch("/pages/by-slug/about-our-sport")
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+// Update a page
+fetch("/pages/1", {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    page: {
+      title: "Updated Page Title",
+      position: 2,
+      level: 1,
+    },
+  }),
+});
 
 ## AI-Powered Features
 

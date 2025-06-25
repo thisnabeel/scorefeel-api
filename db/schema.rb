@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_25_023513) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_25_073114) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_023513) do
     t.date "birth_date"
     t.date "death_date"
     t.index ["sport_id"], name: "index_figures_on_sport_id"
+  end
+
+  create_table "pages", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.integer "position", default: 0
+    t.integer "level", default: 0
+    t.string "pageable_type"
+    t.integer "pageable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pageable_type", "pageable_id"], name: "index_pages_on_pageable_type_and_pageable_id"
+    t.index ["position", "level"], name: "index_pages_on_position_and_level"
+    t.index ["slug"], name: "index_pages_on_slug", unique: true
   end
 
   create_table "pictures", force: :cascade do |t|
