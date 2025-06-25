@@ -10,10 +10,15 @@ Rails.application.routes.draw do
   resources :stories, only: [:index, :show, :create, :update, :destroy]
   resources :pictures, only: [:index, :show, :create, :update, :destroy]
   resources :blurbs, only: [:index, :show, :create, :update, :destroy]
+  resources :bullet_points, only: [:index, :show, :create, :update, :destroy]
   
   # Custom route for getting blurbs by blurbable
   get 'blurbs/for/:blurbable_type/:blurbable_id', to: 'blurbs#for_blurbable'
   post 'blurbs/for/:blurbable_type/:blurbable_id/wizard', to: 'blurbs#wizard'
+  
+  # Custom routes for getting bullet points by bullet_pointable
+  get 'bullet_points/for/:bullet_pointable_type/:bullet_pointable_id', to: 'bullet_points#for_bullet_pointable'
+  post 'bullet_points/for/:bullet_pointable_type/:bullet_pointable_id/wizard', to: 'bullet_points#wizard'
   
   # Additional nested routes for better API design
   resources :sports, only: [:index, :show, :create, :update, :destroy] do

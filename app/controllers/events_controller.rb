@@ -78,6 +78,6 @@ class EventsController < BaseController
   end
 
   def event_params
-    params.require(:event).permit(:title, :date, :eventable_type, :eventable_id)
+    params.require(:event).permit(:title, :start_date, :end_date, :eventable_type, :eventable_id)
   end
 end

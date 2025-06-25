@@ -10,4 +10,13 @@ class SportRule < ApplicationRecord
   validates :body, presence: true
 
   scope :ordered, -> { order(created_at: :desc) }
+
+  # Cache invalidation callbacks
+  after_commit :clear_sports_cache, on: [:create, :update, :destroy]
+
+  private
+
+  def clear_sports_cache
+    Rails.cache.delete("sports_index")
+  end
 end 

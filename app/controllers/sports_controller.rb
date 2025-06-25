@@ -2,8 +2,10 @@ class SportsController < BaseController
   before_action :set_sport, only: [:show, :update, :destroy, :generate_figures, :generate_sport_rules, :generate_story, :generate_events]
 
   def index
-    @sports = Sport.includes(:figures, :sport_rules, :tags).ordered
-    render json: @sports.as_json(include: [:figures, :sport_rules, :tags])
+    @sports = Rails.cache.fetch("sports_index", expires_in: 1.hour) do
+      Sport.includes(:figures, :sport_rules, :tags).ordered.as_json(include: [:figures, :sport_rules, :tags])
+    end
+    render json: @sports
   end
 
   def show
@@ -14,6 +16,8 @@ class SportsController < BaseController
     @sport = Sport.new(sport_params)
     
     if @sport.save
+      # Clear the sports index cache when a new sport is created
+      Rails.cache.delete("sports_index")
       render json: @sport.as_json(include: [:figures, :sport_rules, :tags]), status: :created
     else
       render json: { errors: @sport.errors.full_messages }, status: :unprocessable_entity
@@ -22,6 +26,8 @@ class SportsController < BaseController
 
   def update
     if @sport.update(sport_params)
+      # Clear the sports index cache when a sport is updated
+      Rails.cache.delete("sports_index")
       render json: @sport.as_json(include: [:figures, :sport_rules, :tags])
     else
       render json: { errors: @sport.errors.full_messages }, status: :unprocessable_entity
@@ -30,6 +36,8 @@ class SportsController < BaseController
 
   def destroy
     @sport.destroy
+    # Clear the sports index cache when a sport is deleted
+    Rails.cache.delete("sports_index")
     head :no_content
   end
 
@@ -135,7 +143,7 @@ class SportsController < BaseController
   end
 
   def generate_events
-    prompt = "Today is June 20th 2025, what is the next major #{@sport.title} match? Give me {title:String, abbreviated_display_title: String, date:date}. Return as JSON object exactly like this: {\"title\": \"Full Event Title\", \"abbreviated_display_title\": \"Short Title\", \"date\": \"YYYY-MM-DD\"}."
+    prompt = "Today is June 20th 2025, what is the next major #{@sport.title} match? Give me {title:String, abbreviated_display_title: String, start_date:date}. Return as JSON object exactly like this: {\"title\": \"Full Event Title\", \"abbreviated_display_title\": \"Short Title\", \"start_date\": \"YYYY-MM-DD\"}."
     
     begin
       event_data = WizardService.ask(prompt, "json_object")
@@ -147,7 +155,7 @@ class SportsController < BaseController
       
       event = @sport.events.create!(
         title: event_data["abbreviated_display_title"],
-        date: event_data["date"]
+        start_date: event_data["start_date"]
       )
       
       render json: {

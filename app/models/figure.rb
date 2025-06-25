@@ -16,6 +16,9 @@ class Figure < ApplicationRecord
 
   scope :ordered, -> { order(:position, :title) }
 
+  # Cache invalidation callbacks
+  after_commit :clear_sports_cache, on: [:create, :update, :destroy]
+
   def age
     return nil unless birth_date.present?
     
@@ -25,5 +28,11 @@ class Figure < ApplicationRecord
 
   def alive?
     death_date.blank?
+  end
+
+  private
+
+  def clear_sports_cache
+    Rails.cache.delete("sports_index")
   end
 end 

@@ -75,7 +75,7 @@ These are the RESTful API endpoints for your sports journalism app. Use these ro
 | Delete         | DELETE | `/events/:id`                | Delete an event                  |
 | Generate Story | POST   | `/events/:id/generate_story` | Generate AI story about event    |
 
-**Note**: Events require a `date` field and are ordered by date (most recent first).
+**Note**: Events require a `start_date` field and are ordered by start_date (most recent first). Events also support an optional `end_date` field - if not provided, it defaults to the same as `start_date`. The model includes helper methods `duration_days` and `is_multi_day` for multi-day events.
 
 ---
 
@@ -245,7 +245,8 @@ fetch("/events", {
   body: JSON.stringify({
     event: {
       title: "Championship Win",
-      date: "2024-06-15",
+      start_date: "2024-06-15",
+      end_date: "2024-06-17",
       eventable_type: "Figure",
       eventable_id: 1,
     },

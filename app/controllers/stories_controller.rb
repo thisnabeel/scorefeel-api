@@ -14,7 +14,7 @@ class StoriesController < BaseController
   end
 
   def show
-    render json: @story.as_json(include: [:storyable, :tags, :pictures])
+    render json: @story.as_json(include: [:storyable, :tags, :pictures, :bullet_points])
   end
 
   def create

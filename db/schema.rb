@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_111057) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_25_023513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,13 +25,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_111057) do
     t.index ["blurbable_type", "blurbable_id"], name: "index_blurbs_on_blurbable_type_and_blurbable_id"
   end
 
+  create_table "bullet_points", force: :cascade do |t|
+    t.text "body"
+    t.string "bullet_pointable_type"
+    t.integer "bullet_pointable_id"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bullet_pointable_type", "bullet_pointable_id"], name: "idx_on_bullet_pointable_type_bullet_pointable_id_a0a71a7cb7"
+  end
+
   create_table "events", force: :cascade do |t|
     t.string "title"
     t.string "eventable_type", null: false
     t.bigint "eventable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.date "date"
+    t.date "start_date"
+    t.date "end_date"
     t.index ["eventable_type", "eventable_id"], name: "index_events_on_eventable"
   end
 

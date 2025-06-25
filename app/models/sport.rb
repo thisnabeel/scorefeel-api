@@ -17,6 +17,10 @@ class Sport < ApplicationRecord
 
   scope :ordered, -> { order(:position, :title) }
 
+  # Cache invalidation callbacks
+  after_commit :clear_sports_cache, on: [:create, :update, :destroy]
+  after_commit :clear_sports_cache, on: [:create, :update, :destroy], if: :saved_change_to_title?
+
   # Get all stories related to this sport (direct + through related entities)
   def all_stories
     Story.where(id: [
@@ -25,5 +29,11 @@ class Sport < ApplicationRecord
       sport_rule_stories.pluck(:id),
       event_stories.pluck(:id)
     ].flatten.uniq).includes(:storyable, :tags).ordered
+  end
+
+  private
+
+  def clear_sports_cache
+    Rails.cache.delete("sports_index")
   end
 end 
