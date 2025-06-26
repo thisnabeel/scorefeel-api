@@ -177,9 +177,11 @@ class SportsController < BaseController
   private
 
   def set_sport
-    @sport = Sport.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Sport not found' }, status: :not_found
+    @sport = Sport.find_by(id: params[:id]) || Sport.find_by("LOWER(title) = ?", params[:id].downcase)
+    
+    unless @sport
+      render json: { error: 'Sport not found' }, status: :not_found
+    end
   end
 
   def sport_params
