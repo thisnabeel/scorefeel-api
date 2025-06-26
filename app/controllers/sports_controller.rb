@@ -9,7 +9,7 @@ class SportsController < BaseController
   end
 
   def show
-    render json: @sport.as_json(include: [:figures, :sport_rules, :tags, :events, :stories])
+    render json: @sport.as_json(include: [:figures, :sport_rules, :tags, :events, :stories, :pages])
   end
 
   def create

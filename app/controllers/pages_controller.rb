@@ -7,7 +7,7 @@ class PagesController < BaseController
   end
 
   def show
-    render json: @page
+    render json: @page.as_json(include: [:bullet_points])
   end
 
   def create

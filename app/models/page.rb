@@ -6,6 +6,8 @@ class Page < ApplicationRecord
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :level, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
+  has_many :bullet_points, as: :bullet_pointable, dependent: :destroy
+
   scope :ordered, -> { order(:position, :level, :created_at) }
   scope :for_pageable, ->(pageable_type, pageable_id) { 
     where(pageable_type: pageable_type, pageable_id: pageable_id) 

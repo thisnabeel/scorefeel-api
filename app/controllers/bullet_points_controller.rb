@@ -48,7 +48,7 @@ class BulletPointsController < BaseController
     bullet_pointable_type = params[:bullet_pointable_type].classify
     bullet_pointable_id = params[:bullet_pointable_id]
     
-    result = BulletPoint.wizard(bullet_pointable_type, bullet_pointable_id)
+    result = BulletPoint.wizard(bullet_pointable_type, bullet_pointable_id, params[:prompt])
     
     if result[:success]
       render json: result, status: :created

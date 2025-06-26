@@ -82,6 +82,34 @@ Story.create!(
   storyable: basketball
 )
 
+# Create an admin user for testing
+admin_user = User.create!(
+  email: 'admin@scorefeel.com',
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'Admin',
+  last_name: 'User',
+  birthdate: Date.new(1990, 1, 1),
+  timezone: 'UTC',
+  roles: ['admin']
+)
+
+puts "Created admin user: #{admin_user.email}"
+
+# Create a regular user for testing
+regular_user = User.create!(
+  email: 'user@scorefeel.com',
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'Regular',
+  last_name: 'User',
+  birthdate: Date.new(1995, 5, 15),
+  timezone: 'America/New_York',
+  roles: ['user']
+)
+
+puts "Created regular user: #{regular_user.email}"
+
 puts "Seed data created successfully!"
 puts "Created #{Sport.count} sports"
 puts "Created #{Figure.count} figures"

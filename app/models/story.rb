@@ -5,7 +5,7 @@ class Story < ApplicationRecord
   has_many :tags, through: :taggings
   has_many :blurbs, as: :blurbable, dependent: :destroy
   has_many :bullet_points, as: :bullet_pointable, dependent: :destroy
-  
+
   validates :title, presence: true
   validates :body, presence: true
   validates :storyable, presence: true

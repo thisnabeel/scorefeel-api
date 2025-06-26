@@ -11,7 +11,7 @@ class BulletPoint < ApplicationRecord
 
   before_create :set_position
 
-  def self.wizard(bullet_pointable_type, bullet_pointable_id)
+  def self.wizard(bullet_pointable_type, bullet_pointable_id, prompt)
     begin
       bullet_pointable_class = bullet_pointable_type.constantize
       bullet_pointable = bullet_pointable_class.find(bullet_pointable_id)
@@ -24,7 +24,11 @@ class BulletPoint < ApplicationRecord
         content += "\n\n#{bullet_pointable.summary}"
       end
       
-      prompt = "Generate exactly 5 key bullet points that summarize the main points from this content. Follow the three act structure. These should be concise, informative points that capture the essence of the content. You MUST return a JSON array with exactly 5 objects like this: [{\"body\": \"First key point\"}, {\"body\": \"Second key point\"}, {\"body\": \"Third key point\"}, {\"body\": \"Fourth key point\"}, {\"body\": \"Fifth key point\"}]. Keep each bullet point under 150 characters. Here's the content:\n\n#{content}"
+      if prompt.present?
+        prompt = "Generate as many bullet points as needed, each should be a different aspect or key point. Return as JSON array: [{\"body\": \"Point 1\"}, {\"body\": \"Point 2\"}, {\"body\": \"Point 3\"}, {\"body\": \"Point 4\"}, {\"body\": \"Point 5\"}]. Here's the Content: " + prompt
+      else
+        prompt = "Generate exactly 5 key bullet points that summarize the main points from this content. Follow the three act structure. These should be concise, informative points that capture the essence of the content. You MUST return a JSON array with exactly 5 objects like this: [{\"body\": \"First key point\"}, {\"body\": \"Second key point\"}, {\"body\": \"Third key point\"}, {\"body\": \"Fourth key point\"}, {\"body\": \"Fifth key point\"}]. Keep each bullet point under 150 characters. Here's the content:\n\n#{content}"
+      end
       
       bullet_points_data = WizardService.ask(prompt, "json_object")
       

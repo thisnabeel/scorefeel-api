@@ -11,6 +11,7 @@ class Sport < ApplicationRecord
   has_many :figure_stories, through: :figures, source: :stories
   has_many :sport_rule_stories, through: :sport_rules, source: :stories
   has_many :event_stories, through: :events, source: :stories
+  has_many :pages, as: :pageable, dependent: :destroy
 
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
