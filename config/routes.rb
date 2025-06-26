@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+
 
   resources :users, only: [:index, :show, :create, :update, :destroy] do
     collection do
@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   resources :sports, only: [:index, :show, :create, :update, :destroy] do
     member do
       get 'wizard', action: :wizard
+      post 'generate/story', action: :generate_story
     end
     resources :stories, only: [:index, :show, :create, :update, :destroy]
     resources :events, only: [:index, :show, :create, :update, :destroy]
@@ -55,17 +56,21 @@ Rails.application.routes.draw do
   resources :stories, only: [:index, :show, :create, :update, :destroy] do
     member do
       get 'wizard', action: :wizard
+      post 'generate_pictures', action: :generate_pictures
     end
+    resources :pictures, only: [:index, :show, :create, :update, :destroy]
   end
 
   resources :pictures, only: [:index, :show, :create, :update, :destroy] do
     member do
       get 'wizard', action: :wizard
+      post 'upload_picture', action: :upload_picture
     end
   end
 
   resources :blurbs, only: [:index, :show, :create, :update, :destroy] do
     collection do
+      get 'for/:blurbable_type/:blurbable_id', action: :for_blurbable
       get 'for/:blurbable_type/:blurbable_id/wizard', action: :wizard
     end
   end
@@ -73,6 +78,7 @@ Rails.application.routes.draw do
   resources :bullet_points, only: [:index, :show, :create, :update, :destroy] do
     collection do
       get 'for/:bullet_pointable_type/:bullet_pointable_id/wizard', action: :wizard
+      post 'for/:bullet_pointable_type/:bullet_pointable_id/wizard', action: :wizard
     end
   end
 

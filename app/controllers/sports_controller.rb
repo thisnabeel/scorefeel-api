@@ -80,7 +80,9 @@ class SportsController < BaseController
   end
 
   def generate_story
-    prompt = "Write an engaging story about #{@sport.title}. Include interesting facts, history, and what makes this sport special. The story should be compelling and informative. Return as JSON with title and body fields: {\"title\": \"Story Title\", \"body\": \"Story content here...\"}"
+    prompt_text = params[:prompt] || "Write an engaging story about #{@sport.title}. Include interesting facts, history, and what makes this sport special. The story should be compelling and informative."
+    
+    prompt = "#{prompt_text}. Return as JSON with title and body fields: {\"title\": \"Story Title\", \"body\": \"Story content here formatted as html...\"}"
     
     begin
       story_data = WizardService.ask(prompt, "json_object")
