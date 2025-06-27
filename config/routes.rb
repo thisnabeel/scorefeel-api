@@ -57,6 +57,7 @@ Rails.application.routes.draw do
     member do
       get 'wizard', action: :wizard
       post 'generate_pictures', action: :generate_pictures
+      post 'generate_blurbs', action: :generate_blurbs
     end
     resources :pictures, only: [:index, :show, :create, :update, :destroy]
   end

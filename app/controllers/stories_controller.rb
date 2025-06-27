@@ -1,5 +1,5 @@
 class StoriesController < BaseController
-  before_action :set_story, only: [:show, :update, :destroy, :generate_pictures, :upload_picture, :validate]
+  before_action :set_story, only: [:show, :update, :destroy, :generate_pictures, :generate_blurbs, :upload_picture, :validate]
 
   def index
     if params[:figure_id]
@@ -14,7 +14,7 @@ class StoriesController < BaseController
   end
 
   def show
-    render json: @story.as_json(include: [:storyable, :tags, :pictures, :bullet_points])
+    render json: @story.as_json(include: [:storyable, :tags, :pictures, :bullet_points, :blurbs])
   end
 
   def create
@@ -71,6 +71,54 @@ class StoriesController < BaseController
       puts "Error: #{e.message}"
       render json: { 
         error: "Failed to generate picture suggestions", 
+        details: e.message 
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def generate_blurbs
+    story = Story.find(params[:id])
+    
+    prompt = "Generate 3 compelling rounded pill blurbs for this story. Each blurb should be a concise, engaging summary that captures the essence of the story and entices readers. Return as JSON array with objects like this exactly: [{\"title\": \"Blurb Title 1\", \"description\": \"Blurb description 1\", \"starred\": true}, {\"title\": \"Blurb Title 2\", \"description\": \"Blurb description 2\", \"starred\": false}, {\"title\": \"Blurb Title 3\", \"description\": \"Blurb description 3\", \"starred\": false}]. The first one should be the best/most compelling blurb. Here's the story:\n\n#{story.title}\nPublished on #{story.created_at.strftime('%B %d, %Y')}\n\n#{story.title}\n#{story.body}\n bullet points: #{story.bullet_points.map(&:body).join(', ')}"
+    
+    begin
+      blurbs_data = WizardService.ask(prompt, "json_object")
+      puts "Generated blurbs data: #{blurbs_data}"
+      
+      # Handle different response formats
+      if blurbs_data.is_a?(Hash)
+        if blurbs_data.keys.length == 1
+          blurbs_data = blurbs_data[blurbs_data.keys.first]
+        end
+        
+        # If it's still a single object, wrap it in an array
+        if blurbs_data.is_a?(Hash) && blurbs_data.key?("title")
+          blurbs_data = [blurbs_data]
+        end
+      end
+      
+      # Ensure we have an array
+      blurbs_data = [blurbs_data] unless blurbs_data.is_a?(Array)
+      
+      created_blurbs = []
+      blurbs_data.each do |blurb_data|
+        blurb = story.blurbs.create!(
+          title: blurb_data["title"],
+          description: blurb_data["description"],
+          starred: blurb_data["starred"] || false
+        )
+        created_blurbs << blurb
+      end
+      
+      render json: {
+        message: "Successfully generated #{created_blurbs.count} blurbs for '#{story.title}'",
+        blurbs: created_blurbs
+      }, status: :created
+      
+    rescue => e
+      puts "Error: #{e.message}"
+      render json: { 
+        error: "Failed to generate blurbs", 
         details: e.message 
       }, status: :unprocessable_entity
     end
