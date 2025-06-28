@@ -3,13 +3,13 @@ class SportsController < BaseController
 
   def index
     @sports = Rails.cache.fetch("sports_index", expires_in: 1.hour) do
-      Sport.includes(:figures, :sport_rules, :tags).ordered.as_json(include: [:figures, :sport_rules, :tags])
+      Sport.includes(:figures, :sport_rules, :tags).ordered
     end
     render json: @sports
   end
 
   def show
-    render json: @sport.as_json(include: [:figures, :sport_rules, :tags, :events, :stories, :pages])
+    render json: @sport
   end
 
   def create
@@ -18,7 +18,7 @@ class SportsController < BaseController
     if @sport.save
       # Clear the sports index cache when a new sport is created
       Rails.cache.delete("sports_index")
-      render json: @sport.as_json(include: [:figures, :sport_rules, :tags]), status: :created
+      render json: @sport, status: :created
     else
       render json: { errors: @sport.errors.full_messages }, status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class SportsController < BaseController
     if @sport.update(sport_params)
       # Clear the sports index cache when a sport is updated
       Rails.cache.delete("sports_index")
-      render json: @sport.as_json(include: [:figures, :sport_rules, :tags])
+      render json: @sport
     else
       render json: { errors: @sport.errors.full_messages }, status: :unprocessable_entity
     end

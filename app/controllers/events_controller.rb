@@ -1,5 +1,5 @@
 class EventsController < BaseController
-  before_action :set_event, only: [:show, :update, :destroy]
+  before_action :set_event, only: [:show, :update, :destroy, :add_event]
   before_action :set_sport, only: [:index]
   
   def index
@@ -8,7 +8,7 @@ class EventsController < BaseController
     else
       @events = Event.includes(:eventable, :tags).ordered
     end
-    render json: @events.as_json(include: [:eventable, :tags])
+    render json: @events
   end
 
   def show
@@ -61,6 +61,22 @@ class EventsController < BaseController
       render json: { 
         error: "Failed to generate story", 
         details: e.message 
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def add_event
+    # Create a new event that belongs to the current event
+    new_event = Event.new(event_params.merge(eventable: @event))
+    
+    if new_event.save
+      render json: {
+        message: "Successfully added event '#{new_event.title}' to '#{@event.title}'",
+        event: new_event.as_json(include: [:eventable, :tags])
+      }, status: :created
+    else
+      render json: { 
+        errors: new_event.errors.full_messages 
       }, status: :unprocessable_entity
     end
   end

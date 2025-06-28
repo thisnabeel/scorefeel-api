@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   has_many :stories, as: :storyable, dependent: :destroy
   has_many :taggings, as: :tagable, dependent: :destroy
   has_many :tags, through: :taggings
+  has_many :events, as: :eventable, dependent: :destroy
 
   validates :title, presence: true
   validates :start_date, presence: true
