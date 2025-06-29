@@ -185,6 +185,6 @@ class SportsController < BaseController
   end
 
   def sport_params
-    params.require(:sport).permit(:title, :sport_id, :position)
+    params.require(:sport).permit(:title, :sport_id, :position, :public)
   end
 end
