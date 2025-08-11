@@ -1746,7 +1746,8 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
-    faraday (2.13.1)
+    event_stream_parser (1.0.0)
+    faraday (2.13.4)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -1769,7 +1770,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.12.2)
+    json (2.13.2)
     jsonapi-renderer (0.2.2)
     kamal (2.7.0)
       activesupport (>= 7.0)
@@ -1916,7 +1917,8 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
-    ruby-openai (4.3.2)
+    ruby-openai (8.2.0)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
@@ -1984,7 +1986,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.2)
   rubocop-rails-omakase
-  ruby-openai (~> 4.2)
+  ruby-openai (~> 8.2)
   solid_cable
   solid_cache
   solid_queue
